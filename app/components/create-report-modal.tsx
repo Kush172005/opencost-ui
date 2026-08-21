@@ -164,6 +164,7 @@ export default function CreateReportModal({
         <div className="flex items-center gap-2">
           <input
             id="report-tag-input"
+            type="text"
             value={tagInput}
             onChange={(event) => setTagInput(event.target.value)}
             onKeyDown={(event) => {

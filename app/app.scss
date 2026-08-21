@@ -478,21 +478,13 @@ html[data-carbon-theme] body {
 // ============================================================
 
 // Carbon label text — ensure readability in both themes
-.cds--label {
-  color: var(--cds-text-secondary) !important;
+// (:not keeps Carbon's disabled-label dimming intact)
+.cds--label:not(.cds--label--disabled) {
+  color: var(--cds-text-secondary);
 }
 
-// Carbon Select input — ensure text is always readable
-.cds--select-input {
-  background-color: var(--cds-field) !important;
-  color: var(--cds-text-primary) !important;
-  border-bottom-color: var(--cds-border-strong) !important;
-}
-
-// Carbon Select chevron icon
-.cds--select__arrow {
-  fill: var(--cds-text-primary) !important;
-}
+// Carbon Select input/arrow dark-mode fixes live in the
+// "Modernized Carbon Overrides" section below.
 
 // Checkbox labels in filter panels
 .v2-filter-panel label,
@@ -517,7 +509,6 @@ html[data-carbon-theme] body {
 .cds--modal {
   backdrop-filter: blur(6px);
   background-color: rgba(0, 0, 0, 0.45) !important;
-  transition: opacity 200ms ease-in-out;
 }
 
 // Carbon Modal container
@@ -571,6 +562,10 @@ html[data-carbon-theme] body {
     max-width: none !important;
     min-height: 2.25rem !important;
     height: 2.25rem !important;
+    // Carbon footer buttons are 64px with baseline-aligned labels and
+    // 14px/32px block padding — reset both so the label centers at 36px
+    padding-block: 0 !important;
+    align-items: center !important;
   }
 }
 
@@ -582,66 +577,84 @@ html[data-carbon-theme] body {
   transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
-// Carbon inputs & Text areas
+// Carbon inputs & Text areas.
+// This sheet compiles after Carbon, so same-specificity rules here win by
+// source order without !important — which lets Carbon's higher-specificity
+// state styling (:disabled, --invalid, --warning) keep working.
 .cds--text-input,
 .cds--text-area {
-  background-color: var(--cds-field, var(--cds-layer)) !important;
-  color: var(--cds-text-primary) !important;
-  border: 1px solid var(--cds-border-subtle) !important;
-  border-bottom: 2px solid var(--cds-border-strong) !important;
-  border-radius: 4px !important;
-  padding: 0 0.75rem !important;
-  height: 2.5rem !important;
-  font-size: 0.875rem !important;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+  background-color: var(--cds-field, var(--cds-layer));
+  color: var(--cds-text-primary);
+  border: 1px solid var(--cds-border-subtle);
+  border-bottom: 2px solid var(--cds-border-strong);
+  border-radius: 4px;
+  padding: 0 0.75rem;
+  height: 2.5rem;
+  font-size: 0.875rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 
   &:focus {
-    outline: none !important;
-    border-color: var(--cds-link-primary, #0f62fe) !important;
-    border-bottom-color: var(--cds-link-primary, #0f62fe) !important;
-    box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.2) !important;
+    outline: 2px solid var(--cds-focus);
+    outline-offset: -2px;
+    border-color: var(--cds-link-primary, #0f62fe);
+    border-bottom-color: var(--cds-link-primary, #0f62fe);
+    box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.2);
   }
+}
+
+// Keep Carbon's reserved space for the invalid/warning icon
+.cds--text-input--invalid,
+.cds--text-input--warning {
+  padding-inline-end: 2.5rem;
 }
 
 .cds--text-area {
-  height: auto !important;
-  padding: 0.5rem 0.75rem !important;
+  height: auto;
+  padding: 0.5rem 0.75rem;
 }
 
-// Carbon Select Input
-.cds--select-input {
-  background-color: var(--cds-field, var(--cds-layer)) !important;
-  color: var(--cds-text-primary) !important;
-  border: 1px solid var(--cds-border-subtle) !important;
-  border-bottom: 2px solid var(--cds-border-strong) !important;
-  border-radius: 4px !important;
-  height: 2.5rem !important;
-  font-size: 0.875rem !important;
-  padding-right: 2.5rem !important;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+// Carbon Select Input.
+// Scoped to skip inline selects (Pagination relies on chrome-less inline
+// styling) and disabled selects; height is left to Carbon so size="sm" works.
+.cds--select:not(.cds--select--inline):not(.cds--select--disabled) .cds--select-input {
+  background-color: var(--cds-field, var(--cds-layer));
+  color: var(--cds-text-primary);
+  border: 1px solid var(--cds-border-subtle);
+  border-bottom: 2px solid var(--cds-border-strong);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  padding-right: 2.5rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 
   &:focus {
-    outline: none !important;
-    border-color: var(--cds-link-primary, #0f62fe) !important;
-    border-bottom-color: var(--cds-link-primary, #0f62fe) !important;
-    box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.2) !important;
+    outline: 2px solid var(--cds-focus);
+    outline-offset: -2px;
+    border-color: var(--cds-link-primary, #0f62fe);
+    border-bottom-color: var(--cds-link-primary, #0f62fe);
+    box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.2);
   }
 }
 
+// Carbon Select chevron — readable in both themes; Carbon's disabled
+// dimming still wins via its higher-specificity sibling selector
 .cds--select__arrow {
-  fill: var(--cds-text-primary) !important;
-  right: 0.75rem !important;
+  fill: var(--cds-text-primary);
 }
 
-// Carbon Tags
-.cds--tag {
-  border-radius: var(--radius-full, 9999px) !important;
-  font-size: 0.75rem !important;
-  font-weight: 500 !important;
-  padding: 0.25rem 0.75rem !important;
-  min-height: auto !important;
-  height: auto !important;
-  border: 1px solid transparent !important;
+.cds--select:not(.cds--select--inline) .cds--select__arrow {
+  right: 0.75rem;
+}
+
+// Carbon Tags (skip dismissible filter tags — their geometry is tied to the
+// close button's fixed circular size)
+.cds--tag:not(.cds--tag--filter) {
+  border-radius: var(--radius-full, 9999px);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.75rem;
+  min-height: auto;
+  height: auto;
+  border: 1px solid transparent;
 }
 
 // Focus animations & outlines for native elements
@@ -649,18 +662,23 @@ select,
 input[type="text"],
 input[type="date"],
 textarea {
-  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
   &:focus {
-    outline: none !important;
-    border-color: var(--cds-link-primary, #0f62fe) !important;
-    box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.2) !important;
+    outline: 2px solid var(--cds-focus);
+    outline-offset: -2px;
+    border-color: var(--cds-link-primary, #0f62fe);
+    box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.2);
   }
 }
 
-// Carbon Tiles
+// Carbon Tiles.
+// No !important here: inline styles and Tailwind utilities are used as state
+// indicators (dashboard-builder selection borders, accent panels) and must
+// keep winning over this base styling.
 .cds--tile {
-  background-color: var(--cds-layer) !important;
-  border: 1px solid var(--cds-border-subtle) !important;
-  border-radius: 4px !important;
-  transition: box-shadow 0.15s ease, border-color 0.15s ease !important;
+  background-color: var(--cds-layer);
+  border: 1px solid var(--cds-border-subtle);
+  border-radius: 4px;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }

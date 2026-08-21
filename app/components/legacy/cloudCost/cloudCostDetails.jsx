@@ -14,6 +14,17 @@ import {
 } from "recharts";
 import { toCurrency } from "../../../lib/legacy-util";
 import cloudCostDayTotals from "../../../services/cloud-cost-day-totals";
+import {
+  ThemedModalHeader,
+  modalCenterStyle,
+  paperBaseStyle,
+} from "../themed-modal";
+
+const paperStyle = {
+  ...paperBaseStyle,
+  maxWidth: "700px",
+  maxHeight: "85vh",
+};
 
 const CloudCostDetails = ({
   onClose,
@@ -53,7 +64,7 @@ const CloudCostDetails = ({
         if (resp.message && resp.message.indexOf("boundary error") >= 0) {
           let match = resp.message.match(/(ETL is \d+\.\d+% complete)/);
           let secondary = "Try again after ETL build is complete";
-          if (match.length > 0) {
+          if (match && match.length > 0) {
             secondary = `${match[1]}. ${secondary}`;
           }
           setErrors([
@@ -67,7 +78,7 @@ const CloudCostDetails = ({
       }
     } catch (err) {
       console.log(err);
-      if (err.message.indexOf("404") === 0) {
+      if (err.response?.status === 404 || err.message.includes("404")) {
         setErrors([
           {
             primary: "Failed to load report data",
@@ -112,74 +123,20 @@ const CloudCostDetails = ({
     return dataPoint;
   });
 
-  const modalStyle = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  };
-
-  const paperStyle = {
-    backgroundColor: "var(--cds-layer)",
-    color: "var(--cds-text-primary)",
-    border: "1px solid var(--cds-border-subtle)",
-    borderRadius: "8px",
-    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-    padding: "24px",
-    maxWidth: "700px",
-    width: "90%",
-    maxHeight: "85vh",
-    overflowY: "auto",
-    outline: "none",
-  };
-
   return (
     <div>
-      <Modal
-        open={true}
-        onClose={onClose}
-        title={`Costs over the last ${window}`}
-        style={modalStyle}
-      >
-        <Paper style={paperStyle}>
-          <div style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "16px",
-            borderBottom: "1px solid var(--cds-border-subtle)",
-            paddingBottom: "12px"
-          }}>
-            <h3 style={{
-              margin: 0,
-              fontSize: "1.25rem",
-              fontWeight: 600,
-              color: "var(--cds-text-primary)",
-              fontFamily: '"IBM Plex Sans", sans-serif'
-            }}>
-              {`Costs over the last ${window}`}
-            </h3>
-            <button
-              onClick={onClose}
-              style={{
-                background: "none",
-                border: "none",
-                color: "var(--cds-text-primary)",
-                cursor: "pointer",
-                fontSize: "1.5rem",
-                lineHeight: 1,
-                padding: "4px 8px",
-                borderRadius: "4px",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "var(--cds-layer-hover)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-              }}
-            >
-              &times;
-            </button>
-          </div>
+      <Modal open={true} onClose={onClose} style={modalCenterStyle}>
+        <Paper
+          style={paperStyle}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="cloud-cost-details-title"
+        >
+          <ThemedModalHeader
+            title={`Costs over the last ${window}`}
+            titleId="cloud-cost-details-title"
+            onClose={onClose}
+          />
 
           <Typography style={{ marginTop: "0.5rem", color: "var(--cds-text-secondary)", fontFamily: '"IBM Plex Sans", sans-serif' }} variant="body2">
             {selectedItem}
@@ -197,7 +154,7 @@ const CloudCostDetails = ({
               <Warnings warnings={errors} />
             </div>
           )}
-          {data && (
+          {data.length > 0 && (
             <div style={{ display: "flex", marginTop: "2.5rem" }}>
               <BarChart
                 data={itemData}
@@ -221,6 +178,12 @@ const CloudCostDetails = ({
                   formatter={(value) =>
                     `${toCurrency(value ?? 0, currency, 4, true)}`
                   }
+                  contentStyle={{
+                    backgroundColor: "var(--cds-layer)",
+                    border: "1px solid var(--cds-border-subtle)",
+                    borderRadius: "4px",
+                  }}
+                  labelStyle={{ color: "var(--cds-text-primary)" }}
                 />
               </BarChart>
             </div>

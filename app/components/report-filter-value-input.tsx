@@ -123,6 +123,7 @@ export default function ReportFilterValueInput({
   return (
     <div ref={rootRef} className="relative" onBlur={handleBlur}>
       <input
+        type="text"
         value={draft}
         onChange={(event) => {
           setDraft(event.target.value);
@@ -140,7 +141,7 @@ export default function ReportFilterValueInput({
         <ul
           id={listId}
           role="listbox"
-          className="z-10 mt-1 max-h-48 list-none overflow-y-auto rounded border border-[var(--cds-border-subtle)] bg-[var(--cds-layer)] p-0 shadow-md"
+          className="absolute left-0 right-0 z-10 mt-1 max-h-48 list-none overflow-y-auto rounded border border-[var(--cds-border-subtle)] bg-[var(--cds-layer)] p-0 shadow-md"
         >
           {loading ? (
             <li className="px-2 py-1.5 text-xs text-[var(--cds-text-placeholder)]">Loading…</li>
