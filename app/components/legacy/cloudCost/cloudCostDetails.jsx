@@ -78,7 +78,7 @@ const CloudCostDetails = ({
       }
     } catch (err) {
       console.log(err);
-      if (err.response?.status === 404 || err.message.includes("404")) {
+      if (err.response?.status === 404 || err.message?.includes("404")) {
         setErrors([
           {
             primary: "Failed to load report data",
@@ -88,7 +88,7 @@ const CloudCostDetails = ({
         ]);
       } else {
         let secondary = "Please open an Issue on GitHub if problems persist.";
-        if (err.message.length > 0) {
+        if (err.message?.length > 0) {
           secondary = err.message;
         }
         setErrors([
@@ -110,7 +110,7 @@ const CloudCostDetails = ({
     }
   }, [fetch]);
 
-  const drilldownData = data.sort(
+  const drilldownData = [...data].sort(
     (a, b) =>
       new Date(a.date ?? "").getTime() - new Date(b.date ?? "").getTime(),
   );
@@ -173,7 +173,11 @@ const CloudCostDetails = ({
                 <Legend verticalAlign={"bottom"} />
                 <XAxis dataKey={"time"} />
                 <YAxis tickFormatter={(tick) => `${toCurrency(tick)}`} />
-                <Bar dataKey={"cost"} fill={"#2196f3"} name={"Item Cost"} />
+                <Bar
+                  dataKey={"cost"}
+                  fill={"var(--cds-link-primary)"}
+                  name={"Item Cost"}
+                />
                 <Tooltip
                   formatter={(value) =>
                     `${toCurrency(value ?? 0, currency, 4, true)}`
@@ -184,6 +188,7 @@ const CloudCostDetails = ({
                     borderRadius: "4px",
                   }}
                   labelStyle={{ color: "var(--cds-text-primary)" }}
+                  itemStyle={{ color: "var(--cds-text-primary)" }}
                 />
               </BarChart>
             </div>

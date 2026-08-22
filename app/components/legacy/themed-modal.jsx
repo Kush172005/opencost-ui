@@ -37,17 +37,6 @@ const titleStyle = {
   fontFamily: '"IBM Plex Sans", sans-serif',
 };
 
-const closeButtonStyle = {
-  background: "none",
-  border: "none",
-  color: "var(--cds-text-primary)",
-  cursor: "pointer",
-  fontSize: "1.5rem",
-  lineHeight: 1,
-  padding: "4px 8px",
-  borderRadius: "4px",
-};
-
 const ThemedModalHeader = ({ title, titleId, onClose }) => (
   <div style={headerStyle}>
     <h3 id={titleId} style={titleStyle}>
@@ -55,15 +44,9 @@ const ThemedModalHeader = ({ title, titleId, onClose }) => (
     </h3>
     <button
       type="button"
+      className="themed-modal-close"
       aria-label="Close"
       onClick={onClose}
-      style={closeButtonStyle}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = "var(--cds-layer-hover)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = "transparent";
-      }}
     >
       &times;
     </button>
